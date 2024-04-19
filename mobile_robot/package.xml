@@ -3,17 +3,23 @@
 <package format="3">
   <name>mobile_robot</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>Simulation of Differential Robot</description>
   <maintainer email="yiannisloizou@gmail.com">ecn</maintainer>
-  <license>TODO: License declaration</license>
+  <license>MIT</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>std_msgs</depend>
   <depend>rclcpp</depend>
+  <depend>simple_launch</depend>
+
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
+
+  <exec_depend>joint_state_publisher</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>rviz</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

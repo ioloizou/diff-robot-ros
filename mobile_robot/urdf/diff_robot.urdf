@@ -1,4 +1,10 @@
+<?xml version="1.0"?>
+
 <robot name="diff_robot">
+    
+    <link name="base_footprint">
+    </link>
+
     <link name="base_link">
         <visual>
             <geometry>
@@ -20,6 +26,13 @@
         </inertial>
     </link>
 
+    <joint name="base_joint" type="fixed">
+        <parent link="base_footprint"/>
+        <child link="base_link"/>
+        <origin xyz="0 0 0.135" rpy="0 0 0"/>
+        <axis xyz="0 0 0"/>
+    </joint>
+
     <!-- Rear Right Wheel -->
     <link name="wheel_rear_right_link">
         <visual>
@@ -27,7 +40,7 @@
                 <cylinder radius="0.15" length="0.1"/>
             </geometry>
             <material name="Red">
-                <color rgba="1. 0. 0. 1.9"/>
+                <color rgba="1. 0. 0. 1"/>
             </material>
         </visual>
         <collision>
@@ -46,7 +59,7 @@
         <parent link="base_link"/>
         <child link="wheel_rear_right_link"/>
         <origin xyz="0.250 0.4 0" rpy="1.57 0 0"/>
-        <axis xyz="0 0 0"/>
+        <axis xyz="0 0 1"/>
     </joint>
     
     <!-- Rear Left Wheel -->
@@ -56,7 +69,7 @@
                 <cylinder radius="0.15" length="0.1"/>
             </geometry>
             <material name="Red">
-                <color rgba="1. 0. 0. 1.9"/>
+                <color rgba="1. 0. 0. 1"/>
             </material>
         </visual>
         <collision>
@@ -75,7 +88,7 @@
         <parent link="base_link"/>
         <child link="wheel_rear_left_link"/>
         <origin xyz="0.250 -0.4 0" rpy="1.57 0 0"/>
-        <axis xyz="0 0 0"/>
+        <axis xyz="0 0 1"/>
     </joint>
 
 </robot>
