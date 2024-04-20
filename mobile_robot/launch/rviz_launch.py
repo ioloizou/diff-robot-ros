@@ -13,4 +13,7 @@ def generate_launch_description():
     # Start the joint state publisher node
     sl.joint_state_publisher(use_gui=True)
 
+    # Start differentail control node
+    # sl.node('mobile_robot','diff_control')
+
     return sl.launch_description()
