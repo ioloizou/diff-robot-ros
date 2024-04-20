@@ -8,7 +8,7 @@ def generate_launch_description():
     sl.rviz()
     
     # We get the robot type to generate description
-    sl.robot_state_publisher('mobile_robot', 'diff_robot.urdf', 'urdf')
+    sl.robot_state_publisher('mobile_robot', 'diff_robot.xacro')
 
     # Start the joint state publisher node
     sl.joint_state_publisher(use_gui=True)
