@@ -3,6 +3,10 @@
 #include "geometry_msgs/msg/twist.hpp"
 #include "builtin_interfaces/msg/time.hpp"
 
+#include "geometry_msgs/msg/transform_stamped.hpp"
+#include "tf2/LinearMath/Quaternion.h"
+#include "tf2_ros/transform_broadcaster.h"
+
 #include <algorithm>
 
 // access time units such as 100ms
@@ -17,26 +21,45 @@ class DiffControlNode : public rclcpp::Node
   public:
     DiffControlNode() : Node("controller"), count_(0)
     {      
-      // Init publisher
-      cmd_pub_ = this->create_publisher<Time>("koumparos", 10);
-
-      // init timer - the function publishCommand() should called with the given rate
-      timer_ = this->create_wall_timer(100ms, std::bind(&DiffControlNode::timer_callback, this));
+      // Initialize the transform broadcaster
+      tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
+      timer_ = this->create_wall_timer(500ms, std::bind(&DiffControlNode::move_robot, this));
     }
     
   private:
     
-    void timer_callback()
+    void move_robot()
     {
-      Time time = this->get_clock()->now();
-      cmd_pub_->publish(time);
+      geometry_msgs::msg::TransformStamped t;
+
+      t.header.stamp = this->get_clock()->now();
+      t.header.frame_id = "base_footprint";
+      t.child_frame_id = "base_link";
+
+      t.transform.translation.x = 2;
+      t.transform.translation.y = 2;
+      t.transform.translation.z = 0;
+
+      tf2::Quaternion q;
+      q.setRPY(0, 0, 3.14/2);
+      t.transform.rotation.x = q.x();
+      t.transform.rotation.y = q.y();
+      t.transform.rotation.z = q.z();
+      t.transform.rotation.w = q.w();
+
+      // Send the transformation
+      tf_broadcaster_->sendTransform(t);
+
+      // Printing Sucessful transfom
+      std::cout<<"The transform has taken place re koumpare"<<std::endl;
     }
 
     // declare any subscriber / publisher / member variables and functions
-    rclcpp::Publisher<Time>::SharedPtr cmd_pub_;
+    std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
     rclcpp::TimerBase::SharedPtr timer_;
     size_t count_;  
-
+    
+    
 };
 
 int main(int argc, char** argv)
