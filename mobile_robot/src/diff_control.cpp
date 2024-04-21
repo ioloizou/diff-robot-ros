@@ -1,7 +1,6 @@
 #include "rclcpp/rclcpp.hpp"
-#include "sensor_msgs/msg/joint_state.hpp"
+// #include "sensor_msgs/msg/joint_state.hpp"
 #include "geometry_msgs/msg/twist.hpp"
-#include "builtin_interfaces/msg/time.hpp"
 
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "tf2/LinearMath/Quaternion.h"
@@ -14,7 +13,7 @@ using namespace std::chrono_literals;
 
 // some shortcuts for message classes
 using geometry_msgs::msg::Twist;
-using builtin_interfaces::msg::Time;
+std::chrono::milliseconds dt_milliseconds= 100ms;
 
 class DiffControlNode : public rclcpp::Node
 {
@@ -23,7 +22,7 @@ class DiffControlNode : public rclcpp::Node
     {      
       // Initialize the transform broadcaster
       tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
-      timer_ = this->create_wall_timer(500ms, std::bind(&DiffControlNode::move_robot, this));
+      timer_ = this->create_wall_timer(dt_milliseconds, std::bind(&DiffControlNode::move_robot, this));
     }
     
   private:
@@ -31,17 +30,21 @@ class DiffControlNode : public rclcpp::Node
     void move_robot()
     {
       geometry_msgs::msg::TransformStamped t;
+      double dt_seconds = std::chrono::duration<double>(dt_milliseconds).count();
+      double v=0.1; // meters/second
+      rclcpp::Time now = this->get_clock()->now();
+      translation_x += v*dt_seconds;
 
       t.header.stamp = this->get_clock()->now();
       t.header.frame_id = "base_footprint";
       t.child_frame_id = "base_link";
 
-      t.transform.translation.x = 2;
-      t.transform.translation.y = 2;
+      t.transform.translation.x = translation_x;
+      t.transform.translation.y = 0;
       t.transform.translation.z = 0;
 
       tf2::Quaternion q;
-      q.setRPY(0, 0, 3.14/2);
+      q.setRPY(0, 0, 3.14);
       t.transform.rotation.x = q.x();
       t.transform.rotation.y = q.y();
       t.transform.rotation.z = q.z();
@@ -51,15 +54,15 @@ class DiffControlNode : public rclcpp::Node
       tf_broadcaster_->sendTransform(t);
 
       // Printing Sucessful transfom
-      std::cout<<"The transform has taken place re koumpare"<<std::endl;
+      std::cout<<"The transform has taken place re koumpare: "<<t.transform.translation.x<<"m"<<std::endl;
     }
 
     // declare any subscriber / publisher / member variables and functions
     std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
     rclcpp::TimerBase::SharedPtr timer_;
     size_t count_;  
-    
-    
+    double translation_x = 0;
+      
 };
 
 int main(int argc, char** argv)

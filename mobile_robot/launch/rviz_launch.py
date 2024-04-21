@@ -14,6 +14,6 @@ def generate_launch_description():
     sl.joint_state_publisher(use_gui=True)
 
     # Start differentail control node
-    sl.node('mobile_robot','diff_control')
+    sl.node('mobile_robot','diff_control', output='screen')
 
     return sl.launch_description()
