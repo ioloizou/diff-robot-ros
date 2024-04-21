@@ -1,5 +1,12 @@
+/*
+- Add slider publisher
+- Add rotation
+- Add wheel rotation based on speed and rotation
+*/
+
+
+
 #include "rclcpp/rclcpp.hpp"
-// #include "sensor_msgs/msg/joint_state.hpp"
 #include "geometry_msgs/msg/twist.hpp"
 
 #include "geometry_msgs/msg/transform_stamped.hpp"
@@ -13,16 +20,18 @@ using namespace std::chrono_literals;
 
 // some shortcuts for message classes
 using geometry_msgs::msg::Twist;
-std::chrono::milliseconds dt_milliseconds= 100ms;
+
+// time interval for publishing
+std::chrono::milliseconds dt_milliseconds_= 10ms;
 
 class DiffControlNode : public rclcpp::Node
 {
   public:
     DiffControlNode() : Node("controller"), count_(0)
     {      
-      // Initialize the transform broadcaster
+      // Initializing the transform broadcaster
       tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
-      timer_ = this->create_wall_timer(dt_milliseconds, std::bind(&DiffControlNode::move_robot, this));
+      timer_ = this->create_wall_timer(dt_milliseconds_, std::bind(&DiffControlNode::move_robot, this));
     }
     
   private:
@@ -30,19 +39,26 @@ class DiffControlNode : public rclcpp::Node
     void move_robot()
     {
       geometry_msgs::msg::TransformStamped t;
-      double dt_seconds = std::chrono::duration<double>(dt_milliseconds).count();
-      double v=0.1; // meters/second
-      rclcpp::Time now = this->get_clock()->now();
-      translation_x += v*dt_seconds;
 
+      // Transforming milliseconds to seconds
+      double dt_seconds_ = std::chrono::duration<double>(dt_milliseconds_).count();
+      // meters/second
+      double v_=0.1; 
+      rclcpp::Time now = this->get_clock()->now();
+
+      // Computing travelled distance in x direction
+      translation_x_ += v_*dt_seconds_;
+
+      // Defining the transforms translation
       t.header.stamp = this->get_clock()->now();
       t.header.frame_id = "base_footprint";
       t.child_frame_id = "base_link";
 
-      t.transform.translation.x = translation_x;
+      t.transform.translation.x = translation_x_;
       t.transform.translation.y = 0;
       t.transform.translation.z = 0;
 
+      // Defining the transforms rotation in euler angles and transforming to quartenions
       tf2::Quaternion q;
       q.setRPY(0, 0, 3.14);
       t.transform.rotation.x = q.x();
@@ -53,15 +69,15 @@ class DiffControlNode : public rclcpp::Node
       // Send the transformation
       tf_broadcaster_->sendTransform(t);
 
-      // Printing Sucessful transfom
+      // Printing sucessful transfom
       std::cout<<"The transform has taken place re koumpare: "<<t.transform.translation.x<<"m"<<std::endl;
     }
 
-    // declare any subscriber / publisher / member variables and functions
+    // Declaring subscriber / publisher / member variables and functions
     std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
     rclcpp::TimerBase::SharedPtr timer_;
     size_t count_;  
-    double translation_x = 0;
+    double translation_x_ = 0;
       
 };
 
