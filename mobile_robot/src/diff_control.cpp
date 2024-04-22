@@ -50,7 +50,7 @@ class DiffControlNode : public rclcpp::Node
       // Computing travelled distance
       theta_ += w_*dt_seconds_;
       translation_x_ += v_*dt_seconds_*cos(theta_);
-      translation_y_ += v_*dt_seconds_*cos(theta_);
+      translation_y_ += v_*dt_seconds_*sin(theta_);
 
       // Defining the transforms translation
       t.header.stamp = this->get_clock()->now();

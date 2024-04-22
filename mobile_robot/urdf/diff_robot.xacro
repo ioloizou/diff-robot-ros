@@ -64,9 +64,9 @@
     </xacro:macro>
 
     <!-- Right wheel-->
-    <xacro:wheel name="right" x="0.250" y="0.40"/>
+    <xacro:wheel name="right" x="0" y="0.40"/>
 
     <!-- Left Wheel -->
-    <xacro:wheel name="left" x="0.250" y="-0.40"/>
+    <xacro:wheel name="left" x="0" y="-0.40"/>
 
 </robot>
