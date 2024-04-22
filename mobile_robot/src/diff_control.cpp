@@ -1,10 +1,10 @@
 /*
-- Add slider publisher
 - Add wheel rotation based on speed and rotation
 */
 
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/twist.hpp"
+#include "sensor_msgs/msg/joint_state.hpp"
 
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "tf2/LinearMath/Quaternion.h"
@@ -18,22 +18,29 @@ using namespace std::chrono_literals;
 
 // some shortcuts for message classes
 using geometry_msgs::msg::Twist;
+using sensor_msgs::msg::JointState;
 
 // time interval for publishing
-std::chrono::milliseconds dt_milliseconds_= 10ms;
+std::chrono::milliseconds dt_milliseconds_= 50ms;
 
 class DiffControlNode : public rclcpp::Node
 {
   public:
     DiffControlNode() : Node("controller"), count_(0)
     {      
+
+      joint_state_msg_.name = {"wheel_right_joint", "wheel_left_joint"};
+      joint_state_msg_.position.resize(2,0);
+
       // Initializing the transform broadcaster
       tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
       timer_ = this->create_wall_timer(dt_milliseconds_, std::bind(&DiffControlNode::moveRobot, this));
 
       // Initializing the subscriber to the slider publisher
-      subscription_ = this->create_subscription<Twist>("cmd_vel", 10, std::bind(&DiffControlNode::cmdVelCallback, this, std::placeholders::_1));
+      twist_subscription_ = this->create_subscription<Twist>("cmd_vel", 10, std::bind(&DiffControlNode::cmdVelCallback, this, std::placeholders::_1));
 
+      // Initializing the pulisher to joint state
+      joint_state_publisher_= this->create_publisher<JointState>("joint_states", 10);
 
     }
     
@@ -84,11 +91,27 @@ class DiffControlNode : public rclcpp::Node
 
       // Printing sucessful transfom
       std::cout<<"The transform has taken place re koumpare: "<<t.transform.translation.x<<"m"<<std::endl;
+
+      // Publishing constant joint state command
+      delta_d_ += v_*dt_seconds_;
+      double delta_qr_ = (1/0.15)*delta_d_ - 0.40/0.15*theta_;
+      double delta_ql_ = (1/0.15)*delta_d_ + 0.40/0.15*theta_;
+
+      joint_state_msg_.position[0] = -delta_qr_;
+      joint_state_msg_.position[1] = -delta_ql_;
+
+      joint_state_msg_.header.stamp = this->get_clock()->now();
+
+      joint_state_publisher_->publish(joint_state_msg_);
     }
 
     // Declaring subscriber / publisher / member variables and functions
     std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
-    rclcpp::Subscription<Twist>::SharedPtr subscription_;
+    rclcpp::Subscription<Twist>::SharedPtr twist_subscription_;
+    rclcpp::Publisher<JointState>::SharedPtr joint_state_publisher_;
+
+    JointState joint_state_msg_;
+
     rclcpp::TimerBase::SharedPtr timer_;
     size_t count_;  
 
@@ -97,6 +120,7 @@ class DiffControlNode : public rclcpp::Node
     double translation_x_ = 0;
     double translation_y_ = 0;
     double theta_ = 0;
+    double delta_d_ = 0;
       
 };
 

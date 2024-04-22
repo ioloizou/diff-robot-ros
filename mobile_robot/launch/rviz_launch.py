@@ -10,9 +10,6 @@ def generate_launch_description():
     # We get the robot type to generate description
     sl.robot_state_publisher('mobile_robot', 'diff_robot.xacro')
 
-    # Start the joint state publisher node
-    sl.joint_state_publisher(use_gui=False)
-
     # Start the slider publisher node
     sl.node('slider_publisher', 'slider_publisher', name ='Twist', arguments = [sl.find('mobile_robot', 'Twist.yaml')])
 
