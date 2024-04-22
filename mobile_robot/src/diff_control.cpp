@@ -1,6 +1,5 @@
 /*
 - Add slider publisher
-- Add rotation
 - Add wheel rotation based on speed and rotation
 */
 
@@ -30,21 +29,32 @@ class DiffControlNode : public rclcpp::Node
     {      
       // Initializing the transform broadcaster
       tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
-      timer_ = this->create_wall_timer(dt_milliseconds_, std::bind(&DiffControlNode::move_robot, this));
+      timer_ = this->create_wall_timer(dt_milliseconds_, std::bind(&DiffControlNode::moveRobot, this));
+
+      // Initializing the subscriber to the slider publisher
+      subscription_ = this->create_subscription<Twist>("cmd_vel", 10, std::bind(&DiffControlNode::cmdVelCallback, this, std::placeholders::_1));
+
+
     }
     
   private:
     
-    void move_robot()
+    void cmdVelCallback(const Twist& msg)
+    {
+      // meters/second
+      v_ = msg.linear.x;
+
+      // rad/seconds
+      w_ = msg.angular.z;
+    }
+
+    void moveRobot()
     {
       geometry_msgs::msg::TransformStamped t;
 
       // Transforming milliseconds to seconds
       double dt_seconds_ = std::chrono::duration<double>(dt_milliseconds_).count();
-      // meters/second
-      double v_=0.1; 
-      // rad/seconds
-      double w_=0.1;
+
       rclcpp::Time now = this->get_clock()->now();
 
       // Computing travelled distance
@@ -78,8 +88,12 @@ class DiffControlNode : public rclcpp::Node
 
     // Declaring subscriber / publisher / member variables and functions
     std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
+    rclcpp::Subscription<Twist>::SharedPtr subscription_;
     rclcpp::TimerBase::SharedPtr timer_;
     size_t count_;  
+
+    double v_ = 0;
+    double w_ = 0;
     double translation_x_ = 0;
     double translation_y_ = 0;
     double theta_ = 0;
