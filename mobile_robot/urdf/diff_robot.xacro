@@ -2,6 +2,8 @@
 
 <robot xmlns:xacro="http://ww.ros.org/wiki/xacro" name="diff_robot">
     
+    <xacro:property name="pi" value="3.14159265359"/>
+
     <link name="base_footprint">
     </link>
 
@@ -13,6 +15,7 @@
             <material name="LightGrey">
                 <color rgba="0.7 0.7 0.7 1.0"/>
             </material>
+            <origin xyz="0.250 0.0 0.0" rpy="0.0 0.0 0.0"/>
         </visual>
         <collision>
             <geometry>
@@ -58,7 +61,7 @@
         <joint name="wheel_${name}_joint" type="continuous">
             <parent link="base_link"/>
             <child link="wheel_${name}_link"/>
-            <origin xyz="${x} ${y} 0" rpy="1.57 0 0"/>
+            <origin xyz="${x} ${y} 0" rpy="${-pi/2} 0 0"/>
             <axis xyz="0 0 1"/>
         </joint>
     </xacro:macro>

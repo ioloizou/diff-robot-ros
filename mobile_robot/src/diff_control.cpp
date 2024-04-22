@@ -65,9 +65,9 @@ class DiffControlNode : public rclcpp::Node
       rclcpp::Time now = this->get_clock()->now();
 
       // Computing travelled distance
-      theta_ += w_*dt_seconds_;
-      translation_x_ += v_*dt_seconds_*cos(theta_);
-      translation_y_ += v_*dt_seconds_*sin(theta_);
+      delta_theta_ += w_*dt_seconds_;
+      translation_x_ += v_*dt_seconds_*cos(delta_theta_);
+      translation_y_ += v_*dt_seconds_*sin(delta_theta_);
 
       // Defining the transforms translation
       t.header.stamp = this->get_clock()->now();
@@ -80,7 +80,7 @@ class DiffControlNode : public rclcpp::Node
 
       // Defining the transforms rotation in euler angles and transforming to quartenions
       tf2::Quaternion q;
-      q.setRPY(0, 0, theta_);
+      q.setRPY(0, 0, delta_theta_);
       t.transform.rotation.x = q.x();
       t.transform.rotation.y = q.y();
       t.transform.rotation.z = q.z();
@@ -92,13 +92,18 @@ class DiffControlNode : public rclcpp::Node
       // Printing sucessful transfom
       std::cout<<"The transform has taken place re koumpare: "<<t.transform.translation.x<<"m"<<std::endl;
 
-      // Publishing constant joint state command
-      delta_d_ += v_*dt_seconds_;
-      double delta_qr_ = (1/0.15)*delta_d_ - 0.40/0.15*theta_;
-      double delta_ql_ = (1/0.15)*delta_d_ + 0.40/0.15*theta_;
+      
+      // Calculating wheel rotation based on commanded velocity
+      double wheel_radius_ = 0.15;
+      double wheel_separation = 0.40;
 
-      joint_state_msg_.position[0] = -delta_qr_;
-      joint_state_msg_.position[1] = -delta_ql_;
+      delta_d_ += v_*dt_seconds_;
+      double delta_qr_ = (1/wheel_radius_)*delta_d_ - wheel_separation/wheel_radius_*delta_theta_;
+      double delta_ql_ = (1/wheel_radius_)*delta_d_ + wheel_separation/wheel_radius_*delta_theta_;
+
+      // Publishing constant joint state command
+      joint_state_msg_.position[0] = delta_qr_;
+      joint_state_msg_.position[1] = delta_ql_;
 
       joint_state_msg_.header.stamp = this->get_clock()->now();
 
@@ -119,7 +124,7 @@ class DiffControlNode : public rclcpp::Node
     double w_ = 0;
     double translation_x_ = 0;
     double translation_y_ = 0;
-    double theta_ = 0;
+    double delta_theta_ = 0;
     double delta_d_ = 0;
       
 };
