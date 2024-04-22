@@ -4,8 +4,6 @@
 - Add wheel rotation based on speed and rotation
 */
 
-
-
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/twist.hpp"
 
@@ -14,6 +12,7 @@
 #include "tf2_ros/transform_broadcaster.h"
 
 #include <algorithm>
+#include <cmath>
 
 // access time units such as 100ms
 using namespace std::chrono_literals;
@@ -44,10 +43,14 @@ class DiffControlNode : public rclcpp::Node
       double dt_seconds_ = std::chrono::duration<double>(dt_milliseconds_).count();
       // meters/second
       double v_=0.1; 
+      // rad/seconds
+      double w_=0.1;
       rclcpp::Time now = this->get_clock()->now();
 
-      // Computing travelled distance in x direction
-      translation_x_ += v_*dt_seconds_;
+      // Computing travelled distance
+      theta_ += w_*dt_seconds_;
+      translation_x_ += v_*dt_seconds_*cos(theta_);
+      translation_y_ += v_*dt_seconds_*cos(theta_);
 
       // Defining the transforms translation
       t.header.stamp = this->get_clock()->now();
@@ -55,12 +58,12 @@ class DiffControlNode : public rclcpp::Node
       t.child_frame_id = "base_link";
 
       t.transform.translation.x = translation_x_;
-      t.transform.translation.y = 0;
+      t.transform.translation.y = translation_y_;
       t.transform.translation.z = 0;
 
       // Defining the transforms rotation in euler angles and transforming to quartenions
       tf2::Quaternion q;
-      q.setRPY(0, 0, 3.14);
+      q.setRPY(0, 0, theta_);
       t.transform.rotation.x = q.x();
       t.transform.rotation.y = q.y();
       t.transform.rotation.z = q.z();
@@ -78,6 +81,8 @@ class DiffControlNode : public rclcpp::Node
     rclcpp::TimerBase::SharedPtr timer_;
     size_t count_;  
     double translation_x_ = 0;
+    double translation_y_ = 0;
+    double theta_ = 0;
       
 };
 
