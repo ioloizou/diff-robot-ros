@@ -2,7 +2,6 @@
 
 <robot xmlns:xacro="http://ww.ros.org/wiki/xacro" name="diff_robot">
     
-    <xacro:property name="pi" value="3.14159265359"/>
 
     <link name="base_footprint">
     </link>
