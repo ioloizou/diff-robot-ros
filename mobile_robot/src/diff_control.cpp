@@ -25,9 +25,18 @@ std::chrono::milliseconds dt_milliseconds_= 50ms;
 
 class DiffControlNode : public rclcpp::Node
 {
+  // Declaration of linear and angular velocity
+  double v_ = 0;
+  double w_ = 0;
+
   public:
     DiffControlNode() : Node("controller"), count_(0)
     {      
+      // Declaration of linear and angular velocity parameters
+      v_ = declare_parameter<double>("v", 0);
+      w_ = declare_parameter<double>("w",0);
+       
+
 
       joint_state_msg_.name = {"wheel_right_joint", "wheel_left_joint"};
       joint_state_msg_.position.resize(2,0);
@@ -120,8 +129,6 @@ class DiffControlNode : public rclcpp::Node
     rclcpp::TimerBase::SharedPtr timer_;
     size_t count_;  
 
-    double v_ = 0;
-    double w_ = 0;
     double translation_x_ = 0;
     double translation_y_ = 0;
     double delta_theta_ = 0;
