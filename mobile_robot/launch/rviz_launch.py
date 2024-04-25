@@ -5,6 +5,9 @@ def generate_launch_description():
     sl = SimpleLauncher()
 
     sl.declare_arg('use_slider', True)
+    sl.declare_arg('v', 0.)
+    sl.declare_arg('w', 0.)
+
 
 	# Start the rviz node
     sl.rviz(sl.find('mobile_robot', 'diff.rviz'))
@@ -17,6 +20,6 @@ def generate_launch_description():
         sl.node('slider_publisher', 'slider_publisher', name ='Twist', arguments = [sl.find('mobile_robot', 'Twist.yaml')])
 
     # Start differentail control node
-    sl.node('mobile_robot','diff_control', output='screen', parameters = {'use_slider': sl.arg('use_slider'), 'v': 0.5, 'w':0.7})
+    sl.node('mobile_robot','diff_control', output='screen', parameters = {'use_slider': sl.arg('use_slider'), 'v': sl.arg('v'), 'w':sl.arg('w')})
 
     return sl.launch_description()

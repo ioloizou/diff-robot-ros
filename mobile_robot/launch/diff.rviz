@@ -7,6 +7,7 @@ Panels:
         - /Global Options1
         - /Status1
         - /RobotModel1
+        - /TF1
         - /TF1/Frames1
         - /TF1/Tree1
       Splitter Ratio: 0.5
@@ -77,12 +78,12 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        wheel_rear_left_link:
+        wheel_left_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        wheel_rear_right_link:
+        wheel_right_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -98,12 +99,12 @@ Visualization Manager:
       Frames:
         All Enabled: false
         base_footprint:
-          Value: false
+          Value: true
         base_link:
           Value: true
-        wheel_rear_left_link:
+        wheel_left_link:
           Value: true
-        wheel_rear_right_link:
+        wheel_right_link:
           Value: true
       Marker Scale: 1
       Name: TF
@@ -113,9 +114,9 @@ Visualization Manager:
       Tree:
         base_footprint:
           base_link:
-            wheel_rear_left_link:
+            wheel_left_link:
               {}
-            wheel_rear_right_link:
+            wheel_right_link:
               {}
       Update Interval: 0
       Value: true

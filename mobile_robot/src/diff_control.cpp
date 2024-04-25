@@ -95,7 +95,7 @@ class DiffControlNode : public rclcpp::Node
       tf_broadcaster_->sendTransform(t);
 
       // Printing sucessful transfom
-      RCLCPP_INFO(get_logger(), "The transform has taken place re koumpare x:%fm y:%fm", t.transform.translation.x, t.transform.translation.y);
+      RCLCPP_INFO(get_logger(), "The transform has taken place mpouti mou x:%fm y:%fm", t.transform.translation.x, t.transform.translation.y);
 
       // Calculating wheel rotation based on commanded velocity
       double wheel_radius_ = 0.15;
