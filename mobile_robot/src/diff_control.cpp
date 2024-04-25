@@ -55,6 +55,7 @@ class DiffControlNode : public rclcpp::Node
       w_ = msg.angular.z;
     }
 
+    // 
     void moveRobot()
     {
       geometry_msgs::msg::TransformStamped t;
@@ -92,7 +93,6 @@ class DiffControlNode : public rclcpp::Node
       // Printing sucessful transfom
       std::cout<<"The transform has taken place re koumpare: "<<t.transform.translation.x<<"m"<<std::endl;
 
-      
       // Calculating wheel rotation based on commanded velocity
       double wheel_radius_ = 0.15;
       double wheel_separation = 0.40;

@@ -5,7 +5,7 @@ def generate_launch_description():
     sl = SimpleLauncher()
 
 	# Start the rviz node
-    sl.rviz()
+    sl.rviz(sl.find('mobile_robot', 'diff.rviz'))
     
     # We get the robot type to generate description
     sl.robot_state_publisher('mobile_robot', 'diff_robot.xacro')
