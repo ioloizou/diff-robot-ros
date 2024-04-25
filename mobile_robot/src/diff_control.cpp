@@ -1,7 +1,3 @@
-/*
-- Add wheel rotation based on speed and rotation
-*/
-
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/twist.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
@@ -28,6 +24,7 @@ class DiffControlNode : public rclcpp::Node
   // Declaration of linear and angular velocity
   double v_ = 0;
   double w_ = 0;
+  bool use_slider_ = true;
 
   public:
     DiffControlNode() : Node("controller"), count_(0)
@@ -35,9 +32,8 @@ class DiffControlNode : public rclcpp::Node
       // Declaration of linear and angular velocity parameters
       v_ = declare_parameter<double>("v", 0);
       w_ = declare_parameter<double>("w",0);
-       
-
-
+      use_slider_ = declare_parameter<bool>("use_slider", true); 
+      
       joint_state_msg_.name = {"wheel_right_joint", "wheel_left_joint"};
       joint_state_msg_.position.resize(2,0);
 
@@ -46,7 +42,8 @@ class DiffControlNode : public rclcpp::Node
       timer_ = this->create_wall_timer(dt_milliseconds_, std::bind(&DiffControlNode::moveRobot, this));
 
       // Initializing the subscriber to the slider publisher
-      twist_subscription_ = this->create_subscription<Twist>("cmd_vel", 10, std::bind(&DiffControlNode::cmdVelCallback, this, std::placeholders::_1));
+      if (use_slider_)
+        twist_subscription_ = this->create_subscription<Twist>("cmd_vel", 10, std::bind(&DiffControlNode::cmdVelCallback, this, std::placeholders::_1));
 
       // Initializing the pulisher to joint state
       joint_state_publisher_= this->create_publisher<JointState>("joint_states", 10);
@@ -54,12 +51,10 @@ class DiffControlNode : public rclcpp::Node
     }
     
   private:
-    
     void cmdVelCallback(const Twist& msg)
     {
       // meters/second
       v_ = msg.linear.x;
-
       // rad/seconds
       w_ = msg.angular.z;
     }
@@ -100,7 +95,7 @@ class DiffControlNode : public rclcpp::Node
       tf_broadcaster_->sendTransform(t);
 
       // Printing sucessful transfom
-      std::cout<<"The transform has taken place re koumpare: "<<t.transform.translation.x<<"m"<<std::endl;
+      RCLCPP_INFO(get_logger(), "The transform has taken place re koumpare x:%fm y:%fm", t.transform.translation.x, t.transform.translation.y);
 
       // Calculating wheel rotation based on commanded velocity
       double wheel_radius_ = 0.15;
