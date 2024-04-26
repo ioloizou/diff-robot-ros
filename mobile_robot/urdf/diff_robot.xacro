@@ -12,6 +12,8 @@
     <xacro:property name="wheel_thickness" value="0.1" />
 
     <xacro:property name="castor_radius" value="0.05" />
+    <xacro:property name="castor_x_offset" value="0.55" />
+
 
     <link name="base_footprint">
     </link>
@@ -99,7 +101,7 @@
     <joint name="castor_joint" type="fixed">
         <parent link="base_link"/>
         <child link="castor_link"/>
-        <origin xyz="0.55 0 ${-height_offset + castor_radius/2}" rpy="0 0 0"/>
+        <origin xyz="${castor_x_offset} 0 ${-height_offset + castor_radius/2}" rpy="0 0 0"/>
         <axis xyz="0 0 0"/>
     </joint>
 
