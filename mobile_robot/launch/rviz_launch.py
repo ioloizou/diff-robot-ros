@@ -4,10 +4,9 @@ from simple_launch import SimpleLauncher
 def generate_launch_description():
     sl = SimpleLauncher()
 
-    sl.declare_arg('use_slider', True)
-    sl.declare_arg('v', 0.)
-    sl.declare_arg('w', 0.)
-
+    sl.declare_arg('use_slider', True, description = 'Use slider for publishing linear and angular velocity')
+    sl.declare_arg('v', 0., description = 'Set constant linear velocity')
+    sl.declare_arg('w', 0., description = 'Set cosnstant angular velocity')
 
 	# Start the rviz node
     sl.rviz(sl.find('mobile_robot', 'diff.rviz'))

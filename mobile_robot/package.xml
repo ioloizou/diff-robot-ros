@@ -13,6 +13,7 @@
   <depend>sensor_msgs</depend>
   <depend>rclcpp</depend>
   <depend>simple_launch</depend>
+  <depend>slider_publisher</depend>
 
 
   <test_depend>ament_lint_auto</test_depend>
