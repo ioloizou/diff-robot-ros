@@ -99,7 +99,7 @@ class DiffControlNode : public rclcpp::Node
 
       // Calculating wheel rotation based on commanded velocity
       double wheel_radius_ = 0.15;
-      double wheel_separation = 0.80;
+      double wheel_separation = 0.40;
 
       delta_d_ += v_*dt_seconds_;
       double delta_qr_ = (1/wheel_radius_)*delta_d_ - wheel_separation/wheel_radius_*delta_theta_;
