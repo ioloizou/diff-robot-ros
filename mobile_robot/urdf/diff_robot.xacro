@@ -3,7 +3,7 @@
 <robot xmlns:xacro="http://ww.ros.org/wiki/xacro" name="diff_robot">
     
     <!-- Every value is in SI units -->
-    <xacro:property name="height_offset" value="0.135" />
+    <xacro:property name="height_offset" value="0.15" />
 
     <xacro:property name="chassis_length" value="0.8" />
     <xacro:property name="chassis_width" value="0.7" />
@@ -14,7 +14,7 @@
     <xacro:property name="wheel_thickness" value="0.1" />
     <xacro:property name="wheel_mass" value="0.3" />
 
-    <xacro:property name="castor_radius" value="0.05" />
+    <xacro:property name="castor_radius" value="0.045" />
     <xacro:property name="castor_x_offset" value="0.55" />
     <xacro:property name="castor_mass" value="0.1" />
 
@@ -38,7 +38,7 @@
             </geometry>
         </collision>
         <inertial>
-            <mass value="0.0"/>
+            <mass value="${chassis_mass}"/>
             <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
             <inertia ixx="${1/12*chassis_mass*(pow(chassis_height,2)+pow(chassis_length,2))}" ixy="0.0" ixz="0.0" iyy="${1/12*chassis_mass*(pow(chassis_width,2)+pow(chassis_height,2))}" iyz="0.0" izz="${1/12*chassis_mass*(pow(chassis_width,2)+pow(chassis_length,2))}"/>
         </inertial>
@@ -67,7 +67,7 @@
                 </geometry>
             </collision>
             <inertial>
-                <mass value="0.2"/>
+                <mass value="${wheel_mass}"/>
                 <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
                 <inertia ixx="${1/12*wheel_mass*(3*pow(wheel_radius,2)+pow(wheel_thickness,2))}" ixy="0.0" ixz="0.0" iyy="${1/12*wheel_mass*(3*pow(wheel_radius,2)+pow(wheel_thickness,2))}" iyz="0.0" izz="${1/2*wheel_mass*pow(wheel_radius,2)}"/>
             </inertial>
@@ -96,7 +96,7 @@
             </geometry>
         </collision>
         <inertial>
-            <mass value="0.0"/>
+            <mass value="${castor_mass}"/>
             <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
             <inertia ixx="${2/5*castor_mass*pow(castor_radius,2)}" ixy="0.0" ixz="0.0" iyy="${2/5*castor_mass*pow(castor_radius,2)}" iyz="0.0" izz="${2/5*castor_mass*pow(castor_radius,2)}"/>
         </inertial>
@@ -105,7 +105,7 @@
     <joint name="castor_joint" type="fixed">
         <parent link="base_link"/>
         <child link="castor_link"/>
-        <origin xyz="${castor_x_offset} 0 ${-height_offset + castor_radius/2}" rpy="0 0 0"/>
+        <origin xyz="${castor_x_offset} 0 ${-height_offset + castor_radius}" rpy="0 0 0"/>
         <axis xyz="0 0 0"/>
     </joint>
 
