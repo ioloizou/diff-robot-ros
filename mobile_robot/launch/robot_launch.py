@@ -2,7 +2,7 @@
 from simple_launch import SimpleLauncher
 
 def generate_launch_description():
-    sl = SimpleLauncher()
+    sl = SimpleLauncher(use_sim_time=True)
 
     sl.declare_arg('use_slider', True, description = 'Use slider for publishing linear and angular velocity')
     sl.declare_arg('gazebo', False, description = 'Open Gazebo')
