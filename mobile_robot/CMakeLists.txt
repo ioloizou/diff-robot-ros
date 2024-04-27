@@ -40,7 +40,8 @@ install(TARGETS
 # Install launch files.
 install(DIRECTORY
   launch
-  urdf
+  description
+  config
   DESTINATION share/${PROJECT_NAME}/
 )
 
