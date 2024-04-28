@@ -116,6 +116,6 @@
     <xacro:wheel name="left" x_offset="0" wheel_separation="-0.80"/>
 
     <!-- Include gazebo plugins -->
-    <xacro:include filename="gazebo.xacro" />
+    <xacro:include filename="$(find diff_robot_controller)/description/gazebo.xacro" />
 
 </robot>
