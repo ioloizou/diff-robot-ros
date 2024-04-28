@@ -10,16 +10,14 @@ def generate_launch_description():
     sl.declare_arg('w', 0., description = 'Set cosnstant angular velocity')
     sl.declare_arg('use_param_yaml', False, description = 'Use the parameters yaml instead of the argument parameters')
 
-	# Start the rviz node
-    sl.rviz(sl.find('mobile_robot', 'diff.rviz'))
-    
-    # We get the robot type to generate description
-    sl.robot_state_publisher('mobile_robot', 'diff_robot.xacro')
+	# Start the diff robot description launch file
+    sl.include('diff_robot_description','diff_base_launch.py', launch_arguments={'use_joint_pub': False})
 
     # Start the slider publisher node
     with sl.group(if_condition=sl.arg('use_slider')):
         sl.node('slider_publisher', 'slider_publisher', name ='Twist', arguments = [sl.find('diff_robot_controller', 'Twist.yaml')])
 
+    # Start the gazebo launch file
     with sl.group(if_condition=sl.arg('gazebo')):
         sl.include('diff_robot_gazebo','gazebo_launch.py')
 
