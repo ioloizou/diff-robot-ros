@@ -2,12 +2,13 @@
 from simple_launch import SimpleLauncher
 
 def generate_launch_description():
-    sl = SimpleLauncher(use_sim_time=True)
+    sl = SimpleLauncher(use_sim_time=False)
 
     sl.declare_arg('use_slider', True, description = 'Use slider for publishing linear and angular velocity')
     sl.declare_arg('gazebo', False, description = 'Open Gazebo')
     sl.declare_arg('v', 0., description = 'Set constant linear velocity')
     sl.declare_arg('w', 0., description = 'Set cosnstant angular velocity')
+    sl.declare_arg('use_param_yaml', False, description = 'Use the parameters yaml instead of the argument parameters')
 
 	# Start the rviz node
     sl.rviz(sl.find('mobile_robot', 'diff.rviz'))
@@ -22,7 +23,12 @@ def generate_launch_description():
     with sl.group(if_condition=sl.arg('gazebo')):
         sl.include('mobile_robot','gazebo_launch.py')
 
-    # Start differentail control node
-    sl.node('mobile_robot','diff_control', output='screen', parameters = {'use_slider': sl.arg('use_slider'), 'v': sl.arg('v'), 'w':sl.arg('w')})
+    # Start differential control node with argument parameters
+    with sl.group(unless_condition=sl.arg('use_param_yaml')):
+        sl.node('mobile_robot','diff_control', output='screen', parameters = sl.arg_map('use_slider','v','w'))
+
+    # Start differential control node with parameters from yaml
+    with sl.group(if_condition=sl.arg('use_param_yaml')):
+        sl.node('mobile_robot','diff_control', output='screen', parameters = [sl.find('mobile_robot', 'parameters.yaml')])
 
     return sl.launch_description()
