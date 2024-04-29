@@ -117,5 +117,7 @@
 
     <!-- Include gazebo plugins -->
     <xacro:include filename="$(find diff_robot_gazebo)/urdf/gazebo.xacro" />
+    <xacro:include filename="$(find diff_robot_controller_gazebo)/urdf/gazebo_controller.xacro" />
+
 
 </robot>
