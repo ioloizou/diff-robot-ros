@@ -110,10 +110,10 @@
     </joint>
 
     <!-- Right wheel-->
-    <xacro:wheel name="right" x_offset="0" wheel_separation="0.80"/>
+    <xacro:wheel name="right" x_offset="0" wheel_separation="-0.80"/>
 
     <!-- Left Wheel -->
-    <xacro:wheel name="left" x_offset="0" wheel_separation="-0.80"/>
+    <xacro:wheel name="left" x_offset="0" wheel_separation="0.80"/>
 
     <!-- Include gazebo plugins -->
     <xacro:include filename="$(find diff_robot_gazebo)/urdf/gazebo.xacro" />
